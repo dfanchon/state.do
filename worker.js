@@ -120,7 +120,7 @@ export class Machine {
               if (!machineDefinition) {
                 throw new Error("Incorrect syntax, the body should be a json");
               }
-              this.update(machineDefinition);
+              await this.update(machineDefinition);
               break;
           default:
               throw new Error("Incorrect syntax");            
