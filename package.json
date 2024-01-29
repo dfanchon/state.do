@@ -1,10 +1,8 @@
 {
   "name": "state.do",
   "module": "worker.js",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Finite State Machine implementation with Durable Objects based on xstate",
-  "repository": "git@github.com:drivly/state.do.git",
-  "license": "MIT",
   "scripts": {
     "dev": "wrangler dev worker.js",
     "deploy": "wrangler publish worker.js",

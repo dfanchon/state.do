@@ -1,16 +1,16 @@
 name = "state-do"
-account_id = "b6641681fe423910342b9ffa1364c76d"
-route = { pattern = "*state.do/*", zone_id = "f92a591c82c79347536ecc4ef6dfb604" }
+account_id = "3a3e7b6b1756335927e5261729049958"
+#route = { pattern = "*state.do/*", zone_id = "1c1d456792f8c88ea495dcd07ac7ce00" }
 main = "worker.js"
 compatibility_date = "2023-07-01"
 
-services = [
-  { binding = "CTX", service = "ctx-do", environment = "production" }
-]
+#services = [
+#  { binding = "CTX", service = "ctx-do", environment = "production" }
+#]
 
 [durable_objects]
-bindings = [{name = "STATE", class_name = "State"}]
+bindings = [{name = "machines", class_name = "Machine"}]
 
-[[migrations]]
-tag = "v1" # Should be unique for each entry
-new_classes = ["State"]
+#[[migrations]]
+#tag = "v1" # Should be unique for each entry
+#new_classes = ["State"]
