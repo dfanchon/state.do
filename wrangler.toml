@@ -11,6 +11,6 @@ compatibility_date = "2023-07-01"
 [durable_objects]
 bindings = [{name = "machines", class_name = "Machine"}]
 
-#[[migrations]]
-#tag = "v1" # Should be unique for each entry
-#new_classes = ["State"]
+[[migrations]]
+tag = "v1" # Should be unique for each entry
+new_classes = ["Machine"]

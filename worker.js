@@ -1,5 +1,5 @@
-const State = require('./state.js').default
-exports.State = State
+const Machine = require('./machine.js').default
+exports.Machine = Machine
 
 export default {
 
