@@ -1,3 +1,5 @@
+import { createMachine, interpret } from 'xstate'
+
 export class Machine {
   state
   env
