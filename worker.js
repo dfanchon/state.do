@@ -1,7 +1,7 @@
 const State = require('./state.js').default
 exports.State = State
 
-exports.handlers = {
+export default {
 
   async fetch(request, env) {
     return await handleErrors(request, async () => {
