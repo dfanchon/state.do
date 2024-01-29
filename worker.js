@@ -225,7 +225,7 @@ async function handleErrors(request, func) {
 async function handleApiRequest(path, request, env) {
 
   // We've received at API request. Route the request based on the path.
-  let machine = path[1];
+  let machine = path[0];
   // Route the request to the Machine DO
   let name = machine;
   // The DO Id is derived from the name
