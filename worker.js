@@ -34,6 +34,7 @@ export class Machine {
         this.machine = machine;
         console.log('machine: ' + this.machine);
         let machineDefinition = await request.json();
+        console.log('machineDefinition: ' + machineDefinition);
         if (!machineDefinition) {
           throw new Error("Incorrect syntax, the body should be a json");
         }
@@ -45,9 +46,11 @@ export class Machine {
         }
         return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });  
       })
+      /*
       .post('/machine/:machine/:event', ({ machine, event }) => {
         this.service.send({ type: event });
       })
+      */
 
     state.blockConcurrencyWhile(async () => {
       [this.machineDefinition, this.machineState] = await Promise.all([this.storage.get('machineDefinition'), this.storage.get('machineState')])
@@ -126,11 +129,9 @@ export class Machine {
   /**
    * @param {Request} req
    */
-  async fetch(req, ...args) {
-    await this.router
-      .handle(req, ...args)
-      .then(json)
-      .catch(error)
+  async fetch(req) {
+    const response = await this.router.handle(req);
+    return response;
   }
 
 
