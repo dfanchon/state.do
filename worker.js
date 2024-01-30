@@ -151,13 +151,13 @@ export class Machine {
       default:
         throw new Error("Incorrect syntax");
     }
-*/
+
     let retval = {
       machineDefinition: this.machineDefinition,
       state: this.state
     }
     return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });
-
+*/
 
     /*
     let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then((res) => res.json())
