@@ -30,7 +30,7 @@ export class Machine {
     this.router = Router();
 
     this.router
-      .post('/machine/:machine', async ({ machine }) => {
+      .post('/machine/:machine', async ({ request, machine }) => {
         this.machine = machine;
         console.log('machine: ' + this.machine);
         let machineDefinition = await request.json();
@@ -39,10 +39,11 @@ export class Machine {
         }
         await this.update(machineDefinition);
         console.log('machineDefinition: ' + this.machineDefinition);
-        return {
+        let retval = {
           machineDefinition: this.machineDefinition,
           state: this.state
         }
+        return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });  
       })
       .post('/machine/:machine/:event', ({ machine, event }) => {
         this.service.send({ type: event });
