@@ -125,8 +125,8 @@ export class Machine {
   /**
    * @param {Request} req
    */
-  fetch(req, ...args) {
-    this.router
+  async fetch(req, ...args) {
+    await this.router
       .handle(req, ...args)
       .then(json)
       .catch(error)
