@@ -10,6 +10,7 @@
     "format": "prettier --write '**/*.{js,css,json,md}'"
   },
   "dependencies": {
+    "itty-router": "^4.0.27",
     "xstate": "4.38.3"
   },
   "devDependencies": {

@@ -1,4 +1,5 @@
 import { createMachine, interpret } from 'xstate'
+import { error, json, Router } from 'itty-router'
 
 export class Machine {
   state
@@ -24,6 +25,26 @@ export class Machine {
 
     // Get state
     this.state = state;
+
+    // Create router
+    this.router = Router();
+
+    this.router
+      .post('/machine/:machine', async ({ machine }) => {
+        this.machine = machine;
+        let machineDefinition = await request.json();
+        if (!machineDefinition) {
+          throw new Error("Incorrect syntax, the body should be a json");
+        }
+        await this.update(machineDefinition);
+        return  {
+          machineDefinition: this.machineDefinition,
+          state: this.state
+        }
+      })
+      .post('/machine/:machine/:event', ({ machine, event }) => {
+        this.service.send({type: event});
+      })
 
     state.blockConcurrencyWhile(async () => {
       [this.machineDefinition, this.machineState] = await Promise.all([this.storage.get('machineDefinition'), this.storage.get('machineState')])
@@ -102,12 +123,21 @@ export class Machine {
   /**
    * @param {Request} req
    */
-  async fetch(request) {
+  async fetch(req, ...args) {
+    this.router
+  .handle(req, ...args)
+  .then(json)
+  .catch(error)
+  }
 
+
+    
+/*
     let url = new URL(request.url);
     let path = url.pathname.slice(1).split('/');
     let method = request.method;
     this.machine = path[0];
+    
     switch (method) {
       case "GET":
         break;
@@ -121,6 +151,7 @@ export class Machine {
       default:
         throw new Error("Incorrect syntax");
     }
+*/
     let retval = {
       machineDefinition: this.machineDefinition,
       state: this.state
