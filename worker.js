@@ -32,18 +32,20 @@ export class Machine {
     this.router
       .post('/machine/:machine', async ({ machine }) => {
         this.machine = machine;
+        console.log('machine: ' + this.machine);
         let machineDefinition = await request.json();
         if (!machineDefinition) {
           throw new Error("Incorrect syntax, the body should be a json");
         }
         await this.update(machineDefinition);
-        return  {
+        console.log('machineDefinition: ' + this.machineDefinition);
+        return {
           machineDefinition: this.machineDefinition,
           state: this.state
         }
       })
       .post('/machine/:machine/:event', ({ machine, event }) => {
-        this.service.send({type: event});
+        this.service.send({ type: event });
       })
 
     state.blockConcurrencyWhile(async () => {
@@ -123,90 +125,90 @@ export class Machine {
   /**
    * @param {Request} req
    */
-  async fetch(req, ...args) {
+  fetch(req, ...args) {
     this.router
-  .handle(req, ...args)
-  .then(json)
-  .catch(error)
+      .handle(req, ...args)
+      .then(json)
+      .catch(error)
   }
 
 
-    
-/*
-    let url = new URL(request.url);
-    let path = url.pathname.slice(1).split('/');
-    let method = request.method;
-    this.machine = path[0];
-    
-    switch (method) {
-      case "GET":
-        break;
-      case "POST":
-        let machineDefinition = await request.json();
-        if (!machineDefinition) {
-          throw new Error("Incorrect syntax, the body should be a json");
-        }
-        await this.update(machineDefinition);
-        break;
-      default:
-        throw new Error("Incorrect syntax");
-    }
 
-    let retval = {
-      machineDefinition: this.machineDefinition,
-      state: this.state
-    }
-    return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });
-*/
+  /*
+      let url = new URL(request.url);
+      let path = url.pathname.slice(1).split('/');
+      let method = request.method;
+      this.machine = path[0];
+      
+      switch (method) {
+        case "GET":
+          break;
+        case "POST":
+          let machineDefinition = await request.json();
+          if (!machineDefinition) {
+            throw new Error("Incorrect syntax, the body should be a json");
+          }
+          await this.update(machineDefinition);
+          break;
+        default:
+          throw new Error("Incorrect syntax");
+      }
+  
+      let retval = {
+        machineDefinition: this.machineDefinition,
+        state: this.state
+      }
+      return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });
+  */
 
-    /*
-    let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then((res) => res.json())
-    if (redirect) return Response.redirect(redirect)
-    const [instance, stateEvent] = pathSegments
-    const update = '?update='
-    const isSearchBasedUpdate = search.startsWith(update)
-    const retval = {
-        api: {
-            icon: '●→',
-            name: 'state.do',
-            description: 'Finite State Machine implementation with Durable Objects based on xstate',
-            url: 'https://state.do/',
-            type: 'https://apis.do/state',
-            endpoints: {
-                create: origin + '/:key?{state_machine}',
-                reset: origin + '/:key?reset',
-                update: origin + '/:key?update={state_machine}',
-                read: origin + '/:key',
-                event: origin + '/:key/:event',
-            },
-            site: 'https://state.do',
-            repo: 'https://github.com/drivly/state.do',
-        },
-        instance,
-    }
-    if (search === '?reset') {
-        await this.reset()
-    } else if (search.startsWith('?import=')) {
-        const machine = await fetch(decodeURIComponent(search.substring('?import='.length))).then((res) => res.json())
-        await this.update(machine)
-    } else if (search === '?machine') {
-        if (this.machineDefinition) retval.machine = this.machineDefinition
-        retval.user = user
-        return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
-    } else if ((search && (!this.machineDefinition || isSearchBasedUpdate)) || (method === 'POST' && json?.states)) {
-        await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
-    } else {
-        if (json) console.log(json)
-        if (stateEvent) this.service?.send(stateEvent, json)
-        else if (json) this.service?.send(json)
-    }
-    retval.state = this.machineState
-    if (this.serviceState?.nextEvents && this.serviceState.nextEvents.length)
-        retval.events = this.serviceState.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`)
-    retval.user = user
-    return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
-    */
+  /*
+  let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then((res) => res.json())
+  if (redirect) return Response.redirect(redirect)
+  const [instance, stateEvent] = pathSegments
+  const update = '?update='
+  const isSearchBasedUpdate = search.startsWith(update)
+  const retval = {
+      api: {
+          icon: '●→',
+          name: 'state.do',
+          description: 'Finite State Machine implementation with Durable Objects based on xstate',
+          url: 'https://state.do/',
+          type: 'https://apis.do/state',
+          endpoints: {
+              create: origin + '/:key?{state_machine}',
+              reset: origin + '/:key?reset',
+              update: origin + '/:key?update={state_machine}',
+              read: origin + '/:key',
+              event: origin + '/:key/:event',
+          },
+          site: 'https://state.do',
+          repo: 'https://github.com/drivly/state.do',
+      },
+      instance,
   }
+  if (search === '?reset') {
+      await this.reset()
+  } else if (search.startsWith('?import=')) {
+      const machine = await fetch(decodeURIComponent(search.substring('?import='.length))).then((res) => res.json())
+      await this.update(machine)
+  } else if (search === '?machine') {
+      if (this.machineDefinition) retval.machine = this.machineDefinition
+      retval.user = user
+      return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
+  } else if ((search && (!this.machineDefinition || isSearchBasedUpdate)) || (method === 'POST' && json?.states)) {
+      await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
+  } else {
+      if (json) console.log(json)
+      if (stateEvent) this.service?.send(stateEvent, json)
+      else if (json) this.service?.send(json)
+  }
+  retval.state = this.machineState
+  if (this.serviceState?.nextEvents && this.serviceState.nextEvents.length)
+      retval.events = this.serviceState.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`)
+  retval.user = user
+  return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
+  */
+}
 
 export default {
 
