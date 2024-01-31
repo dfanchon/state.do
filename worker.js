@@ -36,14 +36,14 @@ export class Machine {
         await this.update(content);
         return json({
           machineDefinition: this.machineDefinition,
-          state: this.state
+          state: this.machineState
         })
       })
       .post('/machine/:machine/:event', ({ machine, event }) => {
         this.service.send({ type: event });
         return json({
           machineDefinition: this.machineDefinition,
-          state: this.state
+          state: this.machineState
         })        
       })        
        /*
