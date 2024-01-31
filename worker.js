@@ -50,6 +50,7 @@ export class Machine {
           this.service.send({ type: event });
         })
         */
+      })
 
         state.blockConcurrencyWhile(async () => {
           [this.machineDefinition, this.machineState] = await Promise.all([this.storage.get('machineDefinition'), this.storage.get('machineState')])
