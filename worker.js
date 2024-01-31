@@ -72,11 +72,11 @@ export class Machine {
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition);
     this.actor = createActor(this.machine);
-    /*
     this.actor.onTransition(async (state) => {
       this.actorState = state
       if (this.machineState === state.value) return
-      await this.storage.put('machineState', (this.machineState = state.value))
+      await this.storage.put('machineState', (this.machineState = state.value));
+      /*
       const meta = Object.values(state.meta)[0]
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
@@ -100,10 +100,10 @@ export class Machine {
           this.actor.send(event || data.status.toString(), await data.json())
         }
       }
+      */
     })
-    */
     try {
-      this.actor.start();
+      this.actor.start(state);
     } catch (error) {
       // Machines with new definitions that have incompatible states can't recycle the old state
       this.reset()
