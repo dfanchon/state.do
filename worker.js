@@ -34,10 +34,22 @@ export class Machine {
       .post('/machine/:machine', async ({ machine, content }) => {
         this.machine = machine;
         await this.update(content);
+        /*
         json({
           machineDefinition: this.machineDefinition,
           state: this.state
         });
+        */
+       let retval = {
+        machineDefinition: this.machineDefinition,
+        state: this.state
+      }
+       return new Response({
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(retval)
+      })
       })
     /*
     .post('/machine/:machine/:event', ({ machine, event }) => {
