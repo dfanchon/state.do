@@ -31,7 +31,7 @@ export class Machine {
 
     this.router
       .post('*', withParams, withContent)
-      .post('/machine/:machine', async (machine, content) => {
+      .post('/machine/:machine', async ({ machine, content }) => {
         /*
         let url = new URL(request.url);
         let path = url.pathname.slice(1).split('/');
@@ -51,13 +51,13 @@ export class Machine {
           machineDefinition: this.machineDefinition,
           state: this.state
         }
-        return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });  
+        return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });
       })
-      /*
-      .post('/machine/:machine/:event', ({ machine, event }) => {
-        this.service.send({ type: event });
-      })
-      */
+    /*
+    .post('/machine/:machine/:event', ({ machine, event }) => {
+      this.service.send({ type: event });
+    })
+    */
 
     state.blockConcurrencyWhile(async () => {
       [this.machineDefinition, this.machineState] = await Promise.all([this.storage.get('machineDefinition'), this.storage.get('machineState')])
