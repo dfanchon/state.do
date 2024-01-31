@@ -2006,10 +2006,10 @@
   "resolved" "https://registry.npmjs.org/ws/-/ws-8.16.0.tgz"
   "version" "8.16.0"
 
-"xstate@4.38.3":
-  "integrity" "sha512-SH7nAaaPQx57dx6qvfcIgqKRXIh4L0A1iYEqim4s1u7c9VoCgzZc+63FY90AKU4ZzOC2cfJzTnpO4zK7fCUzzw=="
-  "resolved" "https://registry.npmjs.org/xstate/-/xstate-4.38.3.tgz"
-  "version" "4.38.3"
+"xstate@^5.6.0":
+  "integrity" "sha512-l62p4ZHM/fkGl68574s1dFzFmY8B3BeOff9EqBZbuonTSOXGx1fWTnh4SHSrS8Vhr5wyRT9afqWliMoO6Q+hUQ=="
+  "resolved" "https://registry.npmjs.org/xstate/-/xstate-5.6.0.tgz"
+  "version" "5.6.0"
 
 "xxhash-wasm@^1.0.1":
   "integrity" "sha512-ibF0Or+FivM9lNrg+HGJfVX8WJqgo+kCLDc4vx6xMeTce7Aj+DLttKbxxRR/gNLSAelRc1omAPlJ77N/Jem07A=="

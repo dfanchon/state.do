@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "itty-router": "^4.0.27",
-    "xstate": "4.38.3"
+    "xstate": "^5.6.0"
   },
   "devDependencies": {
     "ava": "^6.0.1",
