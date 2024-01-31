@@ -106,8 +106,8 @@ export class Machine {
           this.actor.send(event || data.status.toString(), await data.json())
         }
       }
-      */
     })
+          */
     try {
       this.actor.start(state);
     } catch (error) {
