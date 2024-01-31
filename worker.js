@@ -79,11 +79,18 @@ export class Machine {
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition);
     this.actor = createActor(this.machine);
+    try {
+      this.actor.start(state);
+    } catch (error) {
+      // Machines with new definitions that have incompatible states can't recycle the old state
+      this.reset()
+    }
     this.actor.subscribe(async (snapshot) => {
-      console.log('Value:', snapshot.value);
+      //console.log('Value:', snapshot.value);
       this.actorState = snapshot
       if (this.machineState === snapshot.value) return
       await this.storage.put('machineState', (this.machineState = snapshot.value));
+      console.log("this.machineState",this.machineState)
     });
     /*
     this.actor.onTransition(async (state) => {
@@ -115,12 +122,7 @@ export class Machine {
       }
     })
           */
-    try {
-      this.actor.start(state);
-    } catch (error) {
-      // Machines with new definitions that have incompatible states can't recycle the old state
-      this.reset()
-    }
+
   }
 
   async reset() {
