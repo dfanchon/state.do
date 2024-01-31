@@ -40,79 +40,73 @@ export class Machine {
           state: this.state
         });
         */
-       let retval = {
-        machineDefinition: this.machineDefinition,
-        state: this.state
-      }
-       return new Response({
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify(retval)
-      })
-      })
-    /*
-    .post('/machine/:machine/:event', ({ machine, event }) => {
-      this.service.send({ type: event });
-    })
-    */
+        let retval = {
+          machineDefinition: this.machineDefinition,
+          state: this.state
+        }
+        return new Response(JSON.stringify(retval), { headers: { 'content-type': 'application/json; charset=utf-8' } })
+        /*
+        .post('/machine/:machine/:event', ({ machine, event }) => {
+          this.service.send({ type: event });
+        })
+        */
 
-    state.blockConcurrencyWhile(async () => {
-      [this.machineDefinition, this.machineState] = await Promise.all([this.storage.get('machineDefinition'), this.storage.get('machineState')])
-      if (this.machineDefinition) {
-        this.startMachine(this.machineState)
+        state.blockConcurrencyWhile(async () => {
+          [this.machineDefinition, this.machineState] = await Promise.all([this.storage.get('machineDefinition'), this.storage.get('machineState')])
+          if (this.machineDefinition) {
+            this.startMachine(this.machineState)
+          }
+        })
       }
-    })
-  }
 
   /**
    * @param {import('xstate').StateValue|undefined} state
    */
   startMachine(state) {
-    this.machine = createMachine(this.machineDefinition)
+        this.machine = createMachine(this.machineDefinition)
     this.service = interpret(this.machine)
     this.service.onTransition(async (state) => {
-      this.serviceState = state
-      if (this.machineState === state.value) return
-      await this.storage.put('machineState', (this.machineState = state.value))
-      const meta = Object.values(state.meta)[0]
-      const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
-      if (callback) {
-        const callbacks = Array.isArray(callback) ? callback : [callback]
-        for (let i = 0; i < callbacks.length; i++) {
-          const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
-          const init = callbacks[i].init || meta?.init || {}
-          init.headers = callbacks[i].headers || meta?.headers || init.headers || {}
-          // Check if the callback has a body (cascade: callback > meta > init > event)
-          const body = callbacks[i].body || meta?.body
-          // If the callback has a body, set it and set the method to POST
-          if (body) init.body = JSON.stringify(body)
-          init.method = callbacks[i].method || meta?.method || init.method || init.body ? 'POST' : 'GET'
-          // If a method requests abody but doesn't have one, stringify the event and set the content-type to application/json
-          if (!init.body && ['POST', 'PUT', 'PATCH'].includes(init.method)) init.body = JSON.stringify(state.event)
-          if (init.body && !init.headers['content-type']) init.headers['content-type'] = 'application/json'
-          console.log({ url, init, state })
-          const data = await fetch(url, init)
-          // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
-          const event = state?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
-          this.service.send(event || data.status.toString(), await data.json())
+          this.serviceState = state
+          if (this.machineState === state.value) return
+          await this.storage.put('machineState', (this.machineState = state.value))
+          const meta = Object.values(state.meta)[0]
+          const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
+          if (callback) {
+            const callbacks = Array.isArray(callback) ? callback : [callback]
+            for (let i = 0; i < callbacks.length; i++) {
+              const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
+              const init = callbacks[i].init || meta?.init || {}
+              init.headers = callbacks[i].headers || meta?.headers || init.headers || {}
+              // Check if the callback has a body (cascade: callback > meta > init > event)
+              const body = callbacks[i].body || meta?.body
+              // If the callback has a body, set it and set the method to POST
+              if (body) init.body = JSON.stringify(body)
+              init.method = callbacks[i].method || meta?.method || init.method || init.body ? 'POST' : 'GET'
+              // If a method requests abody but doesn't have one, stringify the event and set the content-type to application/json
+              if (!init.body && ['POST', 'PUT', 'PATCH'].includes(init.method)) init.body = JSON.stringify(state.event)
+              if (init.body && !init.headers['content-type']) init.headers['content-type'] = 'application/json'
+              console.log({ url, init, state })
+              const data = await fetch(url, init)
+              // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
+              const event = state?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
+              this.service.send(event || data.status.toString(), await data.json())
+            }
+          }
+        })
+    try {
+          this.service.start(state)
+        } catch(error) {
+          // Machines with new definitions that have incompatible states can't recycle the old state
+          this.reset()
         }
       }
-    })
-    try {
-      this.service.start(state)
-    } catch (error) {
-      // Machines with new definitions that have incompatible states can't recycle the old state
-      this.reset()
-    }
-  }
 
   async reset() {
-    // Stop the service and reset the state before restarting it
-    this.service?.stop()
+        // Stop the service and reset the state before restarting it
+        this.service?.stop()
     this.service = undefined
     this.serviceState = undefined
-    if (this.machineState) {
+    if(this.machineState) {
       this.machineState = undefined
       await this.storage.delete('machineState')
     }
