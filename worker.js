@@ -30,6 +30,13 @@ export class Machine {
     this.router = Router();
 
     this.router
+      .get('*', withParams)
+      .get('/machine/:machine', () => {
+        return json({
+          machineDefinition: this.machineDefinition,
+          state: this.machineState
+        })
+      })
       .post('*', withParams, withContent)
       .post('/machine/:machine', async ({ machine, content }) => {
         this.machine = machine;
@@ -39,7 +46,7 @@ export class Machine {
           state: this.machineState
         })
       })
-      .post('/machine/:machine/:event', ({ machine, event }) => {
+      .post('/machine/:machine/event/:event', ({ machine, event }) => {
         this.actor.send({ type: event });
         return json({
           machineDefinition: this.machineDefinition,
