@@ -37,8 +37,15 @@ export class Machine {
         return json({
           machineDefinition: this.machineDefinition,
           state: this.state
-        });
-        
+        })
+      })
+      .post('/machine/:machine/:event', ({ machine, event }) => {
+        this.service.send({ type: event });
+        return json({
+          machineDefinition: this.machineDefinition,
+          state: this.state
+        })        
+      })        
        /*
         let retval = {
           machineDefinition: this.machineDefinition,
@@ -47,11 +54,9 @@ export class Machine {
         return new Response(JSON.stringify(retval), { headers: { 'content-type': 'application/json; charset=utf-8' } })
         */
         /*
-        .post('/machine/:machine/:event', ({ machine, event }) => {
-          this.service.send({ type: event });
-        })
+
         */
-      })
+      
 
         state.blockConcurrencyWhile(async () => {
           [this.machineDefinition, this.machineState] = await Promise.all([this.storage.get('machineDefinition'), this.storage.get('machineState')])
