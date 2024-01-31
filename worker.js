@@ -3,6 +3,8 @@ import { error, json, Router, withParams, withContent } from 'itty-router'
 
 export class Machine {
   state
+  actor
+  /** @type {import('xstate').Actor} */
   env
   /** @type {import('xstate').MachineConfig} */
   machineDefinition
@@ -47,7 +49,7 @@ export class Machine {
         })
       })
       .post('/machine/:machine/event/:event', ({ machine, event }) => {
-        console.log('TRYING TO CHANGE STATE FROM ' + this.machineState + ' TO ' + event);
+        console.log('TRYING TO CHANGE STATE FROM ' + this.machineState + ' WITH EVENT ' + event);
         this.actor.send({ type: event });
         return json({
           machineDefinition: this.machineDefinition,
@@ -80,12 +82,6 @@ export class Machine {
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition);
     this.actor = createActor(this.machine);
-    try {
-      this.actor.start(state);
-    } catch (error) {
-      // Machines with new definitions that have incompatible states can't recycle the old state
-      this.reset()
-    }
     this.actor.subscribe(async (snapshot) => {
       console.log('CHANGING STATE FROM ' + this.machineState + ' TO ', snapshot.value);
       this.actorState = snapshot
@@ -93,6 +89,14 @@ export class Machine {
       await this.storage.put('machineState', (this.machineState = snapshot.value));
       console.log("this.machineState STORED:",this.machineState)
     });
+    try {
+      this.actor.start(state);
+    } catch (error) {
+      console.log(error);
+      // Machines with new definitions that have incompatible states can't recycle the old state
+      this.reset()
+    }
+
     /*
     this.actor.onTransition(async (state) => {
       this.actorState = state
