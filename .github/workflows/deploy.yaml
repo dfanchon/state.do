@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - xstate-v5
 
 jobs:
   deploy:
