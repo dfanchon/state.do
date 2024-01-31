@@ -47,6 +47,7 @@ export class Machine {
         })
       })
       .post('/machine/:machine/event/:event', ({ machine, event }) => {
+        console.log('TRYING TO CHANGE STATE FROM ' + this.machineState + ' TO ' + event);
         this.actor.send({ type: event });
         return json({
           machineDefinition: this.machineDefinition,
@@ -86,11 +87,11 @@ export class Machine {
       this.reset()
     }
     this.actor.subscribe(async (snapshot) => {
-      //console.log('Value:', snapshot.value);
+      console.log('CHANGING STATE FROM ' + this.machineState + ' TO ', snapshot.value);
       this.actorState = snapshot
       if (this.machineState === snapshot.value) return
       await this.storage.put('machineState', (this.machineState = snapshot.value));
-      console.log("this.machineState",this.machineState)
+      console.log("this.machineState STORED:",this.machineState)
     });
     /*
     this.actor.onTransition(async (state) => {
