@@ -72,11 +72,17 @@ export class Machine {
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition);
     this.actor = createActor(this.machine);
+    this.actor.subscribe(async (snapshot) => {
+      console.log('Value:', snapshot.value);
+      this.actorState = snapshot
+      if (this.machineState === snapshot.value) return
+      await this.storage.put('machineState', (this.machineState = snapshot.value));
+    });
+    /*
     this.actor.onTransition(async (state) => {
       this.actorState = state
       if (this.machineState === state.value) return
       await this.storage.put('machineState', (this.machineState = state.value));
-      /*
       const meta = Object.values(state.meta)[0]
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
