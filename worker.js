@@ -1,5 +1,5 @@
 import { createMachine, interpret } from 'xstate'
-import { error, json, Router } from 'itty-router'
+import { error, json, Router, withParams, withContent } from 'itty-router'
 
 export class Machine {
   state
@@ -30,12 +30,17 @@ export class Machine {
     this.router = Router();
 
     this.router
-      .post('/machine/:machine', async (request) => {
+      .post('*', withParams, withContent)
+      .post('/machine/:machine', async (machine, content) => {
+        /*
         let url = new URL(request.url);
         let path = url.pathname.slice(1).split('/');
         this.machine = path[0];
+        */
+        this.machine = machine;
         console.log('machine: ' + this.machine);
-        let machineDefinition = await request.json();
+        //let machineDefinition = await request.json();
+        let machineDefinition = content;
         console.log('machineDefinition: ' + machineDefinition);
         if (!machineDefinition) {
           throw new Error("Incorrect syntax, the body should be a json");
