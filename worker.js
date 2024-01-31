@@ -32,26 +32,12 @@ export class Machine {
     this.router
       .post('*', withParams, withContent)
       .post('/machine/:machine', async ({ machine, content }) => {
-        /*
-        let url = new URL(request.url);
-        let path = url.pathname.slice(1).split('/');
-        this.machine = path[0];
-        */
         this.machine = machine;
-        console.log('machine: ' + this.machine);
-        //let machineDefinition = await request.json();
-        let machineDefinition = content;
-        console.log('machineDefinition: ' + machineDefinition);
-        if (!machineDefinition) {
-          throw new Error("Incorrect syntax, the body should be a json");
-        }
-        await this.update(machineDefinition);
-        console.log('machineDefinition: ' + this.machineDefinition);
-        let retval = {
+        await this.update(content);
+        json({
           machineDefinition: this.machineDefinition,
           state: this.state
-        }
-        return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } });
+        });
       })
     /*
     .post('/machine/:machine/:event', ({ machine, event }) => {
