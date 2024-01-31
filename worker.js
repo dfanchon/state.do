@@ -30,8 +30,10 @@ export class Machine {
     this.router = Router();
 
     this.router
-      .post('/machine/:machine', async ({ request, machine }) => {
-        this.machine = machine;
+      .post('/machine/:machine', async (request => {
+        let url = new URL(request.url);
+        let path = url.pathname.slice(1).split('/');
+        this.machine = path[0];
         console.log('machine: ' + this.machine);
         let machineDefinition = await request.json();
         console.log('machineDefinition: ' + machineDefinition);
