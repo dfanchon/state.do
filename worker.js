@@ -90,6 +90,7 @@ export class Machine {
       console.log("this.machineState STORED:",this.machineState)
     });
     try {
+      console.log('STARTING ACTOR WITH STATE ' + state);
       this.actor.start(state);
     } catch (error) {
       console.log(error);
