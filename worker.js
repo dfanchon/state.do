@@ -85,7 +85,7 @@ export class Machine {
     this.actor.subscribe(async (snapshot) => {
       console.log('CHANGING STATE FROM ' + this.machineState + ' TO ', snapshot.value);
       this.actorState = snapshot
-      if (this.machineState === snapshot.value) return
+      //if (this.machineState === snapshot.value) return
       const persistedState = this.actor.getPersistedSnapshot();
       await this.storage.put('machineState', (this.machineState = persistedState));
       console.log("this.machineState STORED:",this.machineState)
