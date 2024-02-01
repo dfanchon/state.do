@@ -92,7 +92,7 @@ export class Machine {
     });
     try {
       console.log('STARTING ACTOR WITH STATE ' + state);
-      this.actor.start(state);
+      this.actor.start();
     } catch (error) {
       console.log(error);
       // Machines with new definitions that have incompatible states can't recycle the old state
