@@ -81,7 +81,7 @@ export class Machine {
    */
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition);
-    this.actor = createActor(this.machine);
+    this.actor = createActor(this.machine, { snapshot: state });
     this.actor.subscribe(async (snapshot) => {
       console.log('CHANGING STATE FROM ' + this.machineState + ' TO ', snapshot.value);
       this.actorState = snapshot
