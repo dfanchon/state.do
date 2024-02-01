@@ -48,6 +48,13 @@ export class Machine {
           state: this.machineState
         })
       })
+      .post('/machine/:machine/reset', async () => {
+        await this.reset();
+        return json({
+          machineDefinition: this.machineDefinition,
+          state: this.machineState
+        })        
+      })
       .post('/machine/:machine/event/:event', ({ machine, event }) => {
         console.log('TRYING TO CHANGE STATE FROM ' + this.machineState + ' WITH EVENT ' + event);
         this.actor.send({ type: event });
